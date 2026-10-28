@@ -6,12 +6,17 @@ import inspect
 import random
 from types import ModuleType
 
-from .tasks import (bug_fix, intent_classification, invoice_extraction, long_doc_qa, receipt_vision, record_normalization,
-                    regex_from_examples, strict_json, text_to_sql, tool_calling)
+from .tasks import (bug_fix, intent_classification, invoice_extraction, invoice_extraction_hard, long_doc_qa, long_doc_qa_hard,
+                    receipt_vision, record_normalization, regex_from_examples, regex_from_examples_hard, strict_json,
+                    strict_json_hard, text_to_sql, text_to_sql_hard, tool_calling, tool_calling_hard)
 
 TASKS: list[ModuleType] = [invoice_extraction, receipt_vision, strict_json, text_to_sql, intent_classification, bug_fix,
                            tool_calling, long_doc_qa, record_normalization, regex_from_examples]
-BY_ID = {task.TASK_ID: task for task in TASKS}
+# The hard tier: the same task families with inputs built so that low-cost models no longer pass almost everything.
+HARD_TASKS: list[ModuleType] = [invoice_extraction_hard, strict_json_hard, text_to_sql_hard, tool_calling_hard, long_doc_qa_hard,
+                                regex_from_examples_hard]
+ALL_TASKS = TASKS + HARD_TASKS
+BY_ID = {task.TASK_ID: task for task in ALL_TASKS}
 SEED = 20261028
 
 

@@ -150,7 +150,7 @@ TEMPLATES = [
     ("library", "How many loans are currently not returned?", "SELECT COUNT(*) FROM loans WHERE return_date IS NULL", False, lambda r: {}),
     ("library", "List the titles of the 3 most borrowed books, most borrowed first; break ties by title A to Z.",
      "SELECT b.title FROM books b JOIN loans l ON l.book_id = b.id GROUP BY b.id ORDER BY COUNT(*) DESC, b.title ASC LIMIT 3", True, lambda r: {}),
-    ("library", "Which authors from {country} have written at least one book? Return author names.",
+    ("library", "Which authors from {country} have written at least one book? Return the distinct author names (a name shared by two authors appears once).",
      "SELECT DISTINCT a.name FROM authors a JOIN books b ON b.author_id = a.id WHERE a.country = '{country}'", False,
      lambda r: {"country": r.choice(sorted({c for _, c in CITIES}))}),
     ("library", "What is the average number of pages of books borrowed in {month} (YYYY-MM)? Round to 1 decimal.",

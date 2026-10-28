@@ -77,6 +77,30 @@ batch pricing.
 A spec plus four strings that must match and four that must not. Pass when the regex, used with Python's
 `re.fullmatch`, classifies 12 hidden strings correctly. The task most likely to need retries.
 
+## Hard tier (`--tier hard`)
+
+Six harder variants reuse the validators and normalisation rules above, so a pass means the same thing.
+
+- `invoice_extraction_hard` (50): ten fields — vendor, number, issue date, due date, currency, net amount,
+  tax, total, deposit paid, amount due. Invoices carry order and delivery dates as decoys, optional discount
+  and shipping lines, a deposit, prices that may include VAT (so net and tax must be split back out), and
+  often only "Net N days" terms, so the due date has to be computed.
+- `strict_json_hard` (50): a nested schema with stock quantity, dimensions in millimetres and colour/SKU
+  variants. Weights arrive in lb or oz and sizes in inches, converted with the stated factors and rounded
+  half up; the price is the current one of a "was/now" pair; stock is written in words or as "sold out".
+- `text_to_sql_hard` (30): 15 templates over the same three databases needing window functions (ROW_NUMBER,
+  LAG), HAVING, NOT EXISTS, julianday arithmetic, self-joins and percentages. Questions whose LIMIT 1
+  answer would be a tie are skipped, and questions that list names say how to treat two people sharing one.
+- `tool_calling_hard` (50): the same tools, with today stated as Thursday 2026-10-01. Requests use relative
+  dates ("Friday of the week after next"), spoken times and durations ("quarter to nine", "three quarters
+  of an hour"), amounts in words, currencies named by country, "don't create a calendar event" decoys, a
+  refund share to compute and days overdue from issue date and terms.
+- `long_doc_qa_hard` (50): the same cached handbook, with questions that combine sections: highest or
+  lowest region, the difference between two figures, how many items exceed a threshold, a sum.
+- `regex_from_examples_hard` (40): 42 spec families such as binary multiples of 3, calendar dates with leap
+  years, Roman numerals, thousands separators, MAC addresses with one consistent separator, IPv6, semver
+  with prerelease, password rules and counting constraints. Most negatives are well-formed near misses.
+
 ## Reproducibility
 
 `registry.SEED` (20261028) is mixed with each task id, so the same seed always gives the same items.

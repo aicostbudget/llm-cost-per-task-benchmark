@@ -35,7 +35,8 @@ FEEDBACK = "Your previous answer failed validation: {reason}\nReply again, follo
 # Rough output tokens per attempt by task, before reasoning; used for --estimate and the budget guard only.
 OUTPUT_GUESS = {"invoice_extraction": 150, "receipt_vision": 80, "strict_json": 250, "text_to_sql": 120,
                 "intent_classification": 10, "bug_fix": 300, "tool_calling": 80, "long_doc_qa": 40,
-                "record_normalization": 150, "regex_from_examples": 60}
+                "record_normalization": 150, "regex_from_examples": 60, "invoice_extraction_hard": 220, "strict_json_hard": 350,
+                "text_to_sql_hard": 250, "tool_calling_hard": 90, "long_doc_qa_hard": 40, "regex_from_examples_hard": 120}
 IMAGE_TOKENS_GUESS = 1500
 PRICING_REPO = "aicostbudget/ai-api-pricing-data"
 PRICING_FILE = "data/canonical/models.json"
@@ -101,9 +102,13 @@ def attempt_cost(usage: dict, price: dict) -> float:
             + usage["cache_write"] * price["cache_write"] + usage["output"] * price["output"]) / 1_000_000
 
 
+TIERS = {"standard": registry.TASKS, "hard": registry.HARD_TASKS, "all": registry.ALL_TASKS}
+TIER = "standard"
+
+
 def selected_tasks(names: str | None):
     if not names:
-        return registry.TASKS
+        return TIERS[TIER]
     unknown = set(names.split(",")) - set(registry.BY_ID)
     if unknown:
         raise SystemExit(f"unknown task(s): {', '.join(sorted(unknown))}")
@@ -150,8 +155,8 @@ def estimate(args, roster, prices) -> int:
     return 0
 
 
-def validator_output(task_id: str, reply) -> str:
-    if task_id == "tool_calling":
+def validator_output(task, reply) -> str:
+    if getattr(task, "REPLY", "text") == "tool_call":
         return json.dumps(reply.tool_call if reply.tool_call else {"tool": None, "arguments": {}})
     return reply.text
 
@@ -226,12 +231,12 @@ def run(args, roster, prices, pricing_meta) -> int:
                     usage = vars(reply.usage)
                     cost = attempt_cost(usage, price)
                     spent += cost
-                    verdict = registry.validate(task, item, validator_output(task.TASK_ID, reply), shared)
+                    verdict = registry.validate(task, item, validator_output(task, reply), shared)
                     final = verdict.ok or attempt == MAX_ATTEMPTS
                     row = {"model_id": model["model_id"], "task": task.TASK_ID, "item_id": item["id"], "attempt": attempt,
                            "ok": verdict.ok, "reason": verdict.reason, "usage": usage, "cost_usd": round(cost, 8),
                            "stop_reason": reply.stop_reason, "latency_s": round(time.monotonic() - started, 2),
-                           "response_id": reply.raw_id, "output": validator_output(task.TASK_ID, reply)[:4000],
+                           "response_id": reply.raw_id, "output": validator_output(task, reply)[:4000],
                            "at": datetime.now(timezone.utc).isoformat(), "final": final}
                     with log.open("a", encoding="utf-8") as handle:
                         handle.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -339,12 +344,15 @@ def main() -> int:
     parser.add_argument("--limit", type=int, help="first N items per task (smoke tests)")
     parser.add_argument("--budget", type=float, help="hard spending cap in USD for --run")
     parser.add_argument("--run-id")
+    parser.add_argument("--tier", choices=sorted(TIERS), default="standard", help="task set when --tasks is not given")
     parser.add_argument("--pace", type=float, default=0, metavar="SECONDS", help="wait before each call (free-tier per-minute limits)")
     args = parser.parse_args()
     if args.summarize:
         return summarize(args.summarize)
     if args.run and not args.budget:
         parser.error("--run needs --budget")
+    global TIER
+    TIER = args.tier
     roster = load_roster(args.models)
     prices, meta = load_prices(args.pricing, roster)
     if args.estimate:

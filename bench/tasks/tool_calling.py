@@ -15,6 +15,7 @@ from ..fakes import FIRST_NAMES, LAST_NAMES, MONTHS, day_between
 TASK_ID = "tool_calling"
 TITLE = "Tool calling"
 DEFAULT_COUNT = 50
+REPLY = "tool_call"  # the runner validates the converted tool call, not the reply text
 
 SYSTEM = ("You are an operations assistant. Today is 2026-10-01. Use a tool when the request needs one; "
           "otherwise answer in plain text. Dates are YYYY-MM-DD and times HH:MM (24-hour).")

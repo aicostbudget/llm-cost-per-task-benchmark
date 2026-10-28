@@ -36,7 +36,7 @@ def main() -> int:
     parser.add_argument("--task", choices=sorted(registry.BY_ID))
     parser.add_argument("--rerender-images", action="store_true", help="overwrite the committed PNGs (changes their hashes)")
     args = parser.parse_args()
-    tasks = [registry.BY_ID[args.task]] if args.task else registry.TASKS
+    tasks = [registry.BY_ID[args.task]] if args.task else registry.ALL_TASKS
     recorded = json.loads((DATA / "manifest.json").read_text())["files"] if (DATA / "manifest.json").exists() else {}
     manifest = {}
     stale = []
