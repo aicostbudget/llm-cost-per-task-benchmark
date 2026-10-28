@@ -80,5 +80,7 @@ A spec plus four strings that must match and four that must not. Pass when the r
 ## Reproducibility
 
 `registry.SEED` (20261028) is mixed with each task id, so the same seed always gives the same items.
-`data/manifest.json` lists every generated file's SHA-256, and `python generate.py --check` fails if
-anything in `data/` differs from what the generators produce.
+`data/manifest.json` lists every generated file's SHA-256. `python generate.py --check` fails if any text
+file in `data/` differs from what the generators produce now, or if a receipt PNG differs from its recorded
+hash. The PNGs are rendered once and committed, because Pillow's text rendering and PNG encoding vary
+slightly between platforms; `--rerender-images` overwrites them and updates their hashes.
