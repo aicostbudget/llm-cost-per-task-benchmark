@@ -41,7 +41,21 @@ The run prints a table and writes `runs/<run-id>/report.md`:
   with "Success rate source: Measured with my own eval"
 
 `--budget` is a hard cap: the runner stops before any attempt that could take spend past it. Re-running with
-the same `--run-id` resumes where it stopped.
+the same `--run-id` resumes where it stopped; items that only hit API errors are tried again.
+
+### Trying it for free with Gemini
+
+A free [Google AI Studio](https://aistudio.google.com) key (no billing account needed) is enough for a smoke
+test. Free-tier quotas are per model and per day and can be small (we saw 20 requests a day on
+`gemini-3.8-flash`), so test one item per task on a lite model and slow down to the per-minute limit:
+
+```
+python runner.py --run --models gemini-3.5-flash-lite --limit 1 --pace 7 --budget 1 --run-id free-smoke
+```
+
+Costs in the report are what the run would cost at paid prices, which is the number the benchmark is about;
+on the free tier nothing is billed. A 429 "quota exceeded" is not retried, because retries would count
+against the daily quota; resume the same `--run-id` the next day.
 
 ## The tasks
 
@@ -75,6 +89,9 @@ rendering differs slightly between platforms, are checked against the hashes in 
   separately; they never count as model failures.
 - Every attempt is a line in `runs/<run-id>/attempts.jsonl`: uncached input, cached input, cache-write,
   output and reasoning tokens, cost, verdict, reason and the model's output.
+- Caching is measured as each provider reports it. Anthropic gets an explicit cache breakpoint on the
+  system prompt; OpenAI and DeepSeek cache automatically; Gemini's implicit caching is best effort and the
+  runner creates no explicit Gemini cache, so `long_doc_qa` on Gemini may show no cached tokens.
 - Prices are downloaded from the pricing dataset pinned to its current commit, which is recorded in
   `runs/<run-id>/run.json`. Use `--pricing <path>` for a local copy.
 

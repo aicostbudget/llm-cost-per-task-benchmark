@@ -39,7 +39,7 @@ def main() -> int:
     providers.ADAPTERS["fake"] = FakeAdapter
     with tempfile.TemporaryDirectory() as tmp:
         runner.HERE = Path(tmp)
-        args = SimpleNamespace(tasks="invoice_extraction", limit=2, dry_run=False, budget=1.0, run_id="t")
+        args = SimpleNamespace(tasks="invoice_extraction", limit=2, dry_run=False, budget=1.0, run_id="t", pace=0)
         assert runner.run(args, [MODEL], {"fake-model": PRICE}, {}) == 0
         log = Path(tmp) / "runs" / "t" / "attempts.jsonl"
         rows = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
@@ -59,7 +59,18 @@ def main() -> int:
         assert runner.run(args, [MODEL], {"fake-model": PRICE}, {}) == 0
         assert FakeAdapter.calls == calls_before, "resume must skip finished items"
 
-        tight = SimpleNamespace(tasks="invoice_extraction", limit=2, dry_run=False, budget=0.000001, run_id="b")
+        errored = Path(tmp) / "runs" / "e" / "attempts.jsonl"
+        errored.parent.mkdir(parents=True)
+        errored.write_text(json.dumps({"model_id": "fake-model", "task": "invoice_extraction", "item_id": "invoice_extraction-001",
+                                       "attempt": 1, "api_error": "ServerError: 503", "cost_usd": 0.0, "final": True}) + "\n", encoding="utf-8")
+        calls_before = FakeAdapter.calls
+        retry = SimpleNamespace(tasks="invoice_extraction", limit=1, dry_run=False, budget=1.0, run_id="e", pace=0)
+        assert runner.run(retry, [MODEL], {"fake-model": PRICE}, {}) == 0
+        assert FakeAdapter.calls == calls_before + 2, "an item that only hit an API error must run again on resume"
+        retried = json.loads((Path(tmp) / "runs" / "e" / "summary.json").read_text(encoding="utf-8"))[0]
+        assert retried["items"] == 1 and retried["api_errors"] == 0 and retried["success_within_3"] == 1
+
+        tight = SimpleNamespace(tasks="invoice_extraction", limit=2, dry_run=False, budget=0.000001, run_id="b", pace=0)
         assert runner.run(tight, [MODEL], {"fake-model": PRICE}, {}) == 2, "budget guard must stop the run"
         assert not (Path(tmp) / "runs" / "b" / "attempts.jsonl").exists()
     print("runner tests passed")

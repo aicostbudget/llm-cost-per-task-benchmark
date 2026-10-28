@@ -166,7 +166,7 @@ def done_keys(log: Path) -> set[tuple[str, str]]:
     keys = set()
     for line in log.read_text(encoding="utf-8").splitlines():
         row = json.loads(line)
-        if row.get("final"):
+        if row.get("final") and "api_error" not in row:  # items that hit an API error are retried on resume
             keys.add((row["model_id"], row["item_id"]))
     return keys
 
@@ -210,6 +210,8 @@ def run(args, roster, prices, pricing_meta) -> int:
                     if spent + guard > args.budget:
                         print(f"stopping: spent ${spent:.2f}, next attempt could exceed the ${args.budget:.2f} budget")
                         return 2
+                    if args.pace:
+                        time.sleep(args.pace)
                     started = time.monotonic()
                     try:
                         reply = adapter.send(model["api_model"], prompt["system"], turns, images, prompt.get("tools"),
@@ -254,10 +256,11 @@ def summarize(run_dir: Path) -> int:
                                                     "first_input": 0, "first_cached": 0, "first_output": 0})
     for (task, model, _), attempts in by_key.items():
         cell = table[(task, model)]
-        if any("api_error" in a for a in attempts):
+        answered = sorted((a for a in attempts if "api_error" not in a), key=lambda a: a["attempt"])
+        if not answered:
             cell["api_errors"] += 1
             continue
-        attempts.sort(key=lambda a: a["attempt"])
+        attempts = answered
         cell["items"] += 1
         cell["attempts"] += len(attempts)
         cell["first_ok"] += attempts[0]["ok"]
@@ -286,11 +289,11 @@ def summarize(run_dir: Path) -> int:
                            "retry_rate_percent": round(100 * (c["attempts"] - c["items"]) / n, 1)}})
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=1), encoding="utf-8")
     (run_dir / "report.md").write_text(report_markdown(summary, run_dir), encoding="utf-8")
-    print(f"{'task':<22}{'model':<18}{'n':>4}{'1st':>7}{'<=3':>7}{'tries':>7}{'$/success':>12}")
+    print(f"{'task':<22}{'model':<18}{'n':>4}{'1st':>7}{'<=3':>7}{'tries':>7}{'$/success':>12}{'api err':>9}")
     for s in summary:
         cps = s["cost_per_success_3_attempts"]
         print(f"{s['task']:<22}{s['model_id']:<18}{s['items']:>4}{s['first_attempt_success']:>7.0%}{s['success_within_3']:>7.0%}"
-              f"{s['mean_attempts']:>7.2f}{('$%.5f' % cps) if cps is not None else '-':>12}")
+              f"{s['mean_attempts']:>7.2f}{('$%.5f' % cps) if cps is not None else '-':>12}{s['api_errors']:>9}")
     print(f"wrote {run_dir / 'summary.json'} and {run_dir / 'report.md'}")
     return 0
 
@@ -336,6 +339,7 @@ def main() -> int:
     parser.add_argument("--limit", type=int, help="first N items per task (smoke tests)")
     parser.add_argument("--budget", type=float, help="hard spending cap in USD for --run")
     parser.add_argument("--run-id")
+    parser.add_argument("--pace", type=float, default=0, metavar="SECONDS", help="wait before each call (free-tier per-minute limits)")
     args = parser.parse_args()
     if args.summarize:
         return summarize(args.summarize)

@@ -114,7 +114,11 @@ class Gemini:
     def __init__(self) -> None:
         from google import genai
         self.genai = genai
-        self.client = genai.Client()
+        # Unlike the other SDKs, google-genai does not retry by default; 5xx (often "high demand") is retried
+        # with exponential backoff here. 429 is not: on the free tier it usually means the daily request quota
+        # is used up, and every retry would count against it. Use runner.py --pace for per-minute limits.
+        retry = genai.types.HttpRetryOptions(attempts=4, initial_delay=2.0, max_delay=30.0, http_status_codes=[408, 500, 502, 503, 504])
+        self.client = genai.Client(http_options=genai.types.HttpOptions(retry_options=retry))
 
     def send(self, api_model: str, system: str, turns: list[dict], images: list[Path], tools: list[dict] | None,
              cache_system: bool) -> Reply:
