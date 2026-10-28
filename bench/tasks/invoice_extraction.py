@@ -64,7 +64,8 @@ def generate(rng: random.Random, count: int) -> list[dict]:
         rate = rng.choice([Decimal("0"), Decimal("0.05"), Decimal("0.08"), Decimal("0.1"), Decimal("0.19"), Decimal("0.2")])
         tax = (subtotal * rate).quantize(Decimal("0.01"))
         total = subtotal + tax
-        number = rng.choice(["INV-", "", "No. ", "F"]) + f"{rng.randint(2026000, 2026999)}" + rng.choice(["", "-A", "/26"])
+        # "No." is printed as a label in the first layout and is never part of the number itself.
+        number = rng.choice(["INV-", "", "F"]) + f"{rng.randint(2026000, 2026999)}" + rng.choice(["", "-A", "/26"])
         street, city, _country = address(rng)
         date_style = rng.choice([long_date, day_month_year, lambda d: d.isoformat()])
         layout = rng.randint(0, 2)
@@ -73,7 +74,7 @@ def generate(rng: random.Random, count: int) -> list[dict]:
         rate_label = f"{int(rate * 100)}%"
         if layout == 0:
             text = "\n".join([
-                vendor.upper(), f"{street}, {city}", "", f"INVOICE {number}",
+                vendor.upper(), f"{street}, {city}", "", f"INVOICE No. {number}",
                 f"Date of issue: {date_style(issued)}", f"Payment due: {date_style(due)}",
                 f"Bill to: {buyer}, attn. {person(rng)}", "", *body_lines, "",
                 f"Subtotal: {_money(subtotal, symbol, style)}", f"Tax ({rate_label}): {_money(tax, symbol, style)}",

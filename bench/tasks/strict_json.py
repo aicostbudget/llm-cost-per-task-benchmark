@@ -48,7 +48,7 @@ PRODUCTS = {
     "computing": ["mechanical keyboard", "USB-C dock", "27-inch monitor", "wireless mouse"],
     "home": ["table lamp", "air purifier", "throw blanket", "wall clock"],
     "kitchen": ["chef's knife", "pour-over kettle", "cast iron skillet", "spice grinder"],
-    "outdoor": ["camping lantern", "trail backpack", "folding chair", "water filter bottle"],
+    "outdoor": ["camping lantern", "trail backpack", "camping stove", "water filter bottle"],
     "office": ["standing desk mat", "label maker", "desk organizer", "whiteboard"],
     "fitness": ["yoga mat", "adjustable dumbbell", "jump rope", "foam roller"],
     "toys": ["wooden train set", "puzzle cube", "building blocks kit", "plush fox"],
@@ -81,6 +81,8 @@ def generate(rng: random.Random, count: int) -> list[dict]:
             f"{rng.choice(STOCK_TEXT[in_stock])} {name} by {brand}: {weight_text}, finishes: {color_text}. Price {price_text}.",
             f"New from {brand}: the {product} ({name}). Price: {price_text}. Weight {weight_text}. Colours available: {color_text}. {rng.choice(STOCK_TEXT[in_stock])}",
         ])
+        # The category is stated, not left to judgement: several products fit more than one department.
+        description += f" Listed in our {category} department."
         expected = {"name": name, "brand": brand, "category": category, "amount": amount, "currency": currency,
                     "in_stock": in_stock, "colors": sorted(colors), "weight_grams": weight_g}
         items.append({"id": f"{TASK_ID}-{index + 1:03d}", "input": {"description": description}, "expected": expected})
