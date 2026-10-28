@@ -1,0 +1,13 @@
+{
+  "note": "Run roster for P0-7. model_id must match the pricing dataset; api_model is what the provider's API expects. Prices are read from the dataset at run time, never typed here. reasoning_allowance is only used by --estimate.",
+  "models": [
+    {"model_id": "gpt-6.1-sol", "provider": "openai", "api_model": "gpt-6.1-sol", "vision": true, "reasoning_allowance": 1000},
+    {"model_id": "gpt-6-luna", "provider": "openai", "api_model": "gpt-6-luna", "vision": true, "reasoning_allowance": 300},
+    {"model_id": "claude-opus-5-5", "provider": "anthropic", "api_model": "claude-opus-5-5", "vision": true, "reasoning_allowance": 1000},
+    {"model_id": "claude-haiku-5-5", "provider": "anthropic", "api_model": "claude-haiku-5-5", "vision": true, "reasoning_allowance": 300},
+    {"model_id": "gemini-4-argon", "provider": "google-gemini", "api_model": "gemini-4-argon", "vision": true, "reasoning_allowance": 1000},
+    {"model_id": "gemini-3.8-flash", "provider": "google-gemini", "api_model": "gemini-3.8-flash", "vision": true, "reasoning_allowance": 300},
+    {"model_id": "deepseek-v4-pro", "provider": "deepseek", "api_model": "deepseek-v4-pro", "vision": false, "reasoning_allowance": 1000},
+    {"model_id": "deepseek-flash", "provider": "deepseek", "api_model": "deepseek-flash", "vision": false, "reasoning_allowance": 300}
+  ]
+}

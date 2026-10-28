@@ -1,0 +1,30 @@
+{"expected": {"date": "2026-06-24", "merchant": "Ironleaf Deli", "total": "75.41"}, "id": "receipt_vision-001", "input": {"image": "images/receipt_vision-001.png"}}
+{"expected": {"date": "2026-08-18", "merchant": "Ironleaf Cafe", "total": "97.30"}, "id": "receipt_vision-002", "input": {"image": "images/receipt_vision-002.png"}}
+{"expected": {"date": "2026-03-17", "merchant": "Brightfield Deli", "total": "49.41"}, "id": "receipt_vision-003", "input": {"image": "images/receipt_vision-003.png"}}
+{"expected": {"date": "2026-01-15", "merchant": "Summitreach Market", "total": "32.46"}, "id": "receipt_vision-004", "input": {"image": "images/receipt_vision-004.png"}}
+{"expected": {"date": "2026-04-12", "merchant": "Pinecrest Deli", "total": "63.95"}, "id": "receipt_vision-005", "input": {"image": "images/receipt_vision-005.png"}}
+{"expected": {"date": "2026-04-27", "merchant": "Kestrel Pharmacy", "total": "41.15"}, "id": "receipt_vision-006", "input": {"image": "images/receipt_vision-006.png"}}
+{"expected": {"date": "2026-04-12", "merchant": "Kestrel Market", "total": "58.05"}, "id": "receipt_vision-007", "input": {"image": "images/receipt_vision-007.png"}}
+{"expected": {"date": "2026-07-07", "merchant": "Clearwater Deli", "total": "64.86"}, "id": "receipt_vision-008", "input": {"image": "images/receipt_vision-008.png"}}
+{"expected": {"date": "2026-09-11", "merchant": "Redstone Books", "total": "65.07"}, "id": "receipt_vision-009", "input": {"image": "images/receipt_vision-009.png"}}
+{"expected": {"date": "2026-03-21", "merchant": "Bluepeak Deli", "total": "84.38"}, "id": "receipt_vision-010", "input": {"image": "images/receipt_vision-010.png"}}
+{"expected": {"date": "2026-01-19", "merchant": "Brightfield Garden Centre", "total": "71.91"}, "id": "receipt_vision-011", "input": {"image": "images/receipt_vision-011.png"}}
+{"expected": {"date": "2026-03-18", "merchant": "Brightfield Pharmacy", "total": "13.70"}, "id": "receipt_vision-012", "input": {"image": "images/receipt_vision-012.png"}}
+{"expected": {"date": "2026-05-24", "merchant": "Oakridge Bakery", "total": "88.00"}, "id": "receipt_vision-013", "input": {"image": "images/receipt_vision-013.png"}}
+{"expected": {"date": "2026-08-30", "merchant": "Pinecrest Garden Centre", "total": "76.47"}, "id": "receipt_vision-014", "input": {"image": "images/receipt_vision-014.png"}}
+{"expected": {"date": "2026-04-04", "merchant": "Northwind Hardware", "total": "46.21"}, "id": "receipt_vision-015", "input": {"image": "images/receipt_vision-015.png"}}
+{"expected": {"date": "2026-03-29", "merchant": "Harborview Hardware", "total": "83.17"}, "id": "receipt_vision-016", "input": {"image": "images/receipt_vision-016.png"}}
+{"expected": {"date": "2026-03-15", "merchant": "Brightfield Bakery", "total": "69.98"}, "id": "receipt_vision-017", "input": {"image": "images/receipt_vision-017.png"}}
+{"expected": {"date": "2026-08-12", "merchant": "Westbrook Bakery", "total": "32.51"}, "id": "receipt_vision-018", "input": {"image": "images/receipt_vision-018.png"}}
+{"expected": {"date": "2026-09-22", "merchant": "Granite Books", "total": "89.31"}, "id": "receipt_vision-019", "input": {"image": "images/receipt_vision-019.png"}}
+{"expected": {"date": "2026-04-17", "merchant": "Clearwater Garden Centre", "total": "87.55"}, "id": "receipt_vision-020", "input": {"image": "images/receipt_vision-020.png"}}
+{"expected": {"date": "2026-02-05", "merchant": "Clearwater Books", "total": "70.36"}, "id": "receipt_vision-021", "input": {"image": "images/receipt_vision-021.png"}}
+{"expected": {"date": "2026-04-25", "merchant": "Pinecrest Garden Centre", "total": "59.98"}, "id": "receipt_vision-022", "input": {"image": "images/receipt_vision-022.png"}}
+{"expected": {"date": "2026-06-05", "merchant": "Harborview Pharmacy", "total": "65.16"}, "id": "receipt_vision-023", "input": {"image": "images/receipt_vision-023.png"}}
+{"expected": {"date": "2026-02-02", "merchant": "Bluepeak Garden Centre", "total": "101.33"}, "id": "receipt_vision-024", "input": {"image": "images/receipt_vision-024.png"}}
+{"expected": {"date": "2026-03-16", "merchant": "Harborview Deli", "total": "62.96"}, "id": "receipt_vision-025", "input": {"image": "images/receipt_vision-025.png"}}
+{"expected": {"date": "2026-02-14", "merchant": "Oakridge Pharmacy", "total": "82.78"}, "id": "receipt_vision-026", "input": {"image": "images/receipt_vision-026.png"}}
+{"expected": {"date": "2026-09-18", "merchant": "Brightfield Cafe", "total": "28.83"}, "id": "receipt_vision-027", "input": {"image": "images/receipt_vision-027.png"}}
+{"expected": {"date": "2026-06-26", "merchant": "Harborview Cafe", "total": "61.80"}, "id": "receipt_vision-028", "input": {"image": "images/receipt_vision-028.png"}}
+{"expected": {"date": "2026-04-23", "merchant": "Silvergate Cafe", "total": "65.28"}, "id": "receipt_vision-029", "input": {"image": "images/receipt_vision-029.png"}}
+{"expected": {"date": "2026-04-28", "merchant": "Westbrook Market", "total": "108.78"}, "id": "receipt_vision-030", "input": {"image": "images/receipt_vision-030.png"}}

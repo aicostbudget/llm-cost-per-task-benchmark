@@ -1,0 +1,50 @@
+{"expected": {"label": "transfer_wrong_recipient"}, "id": "intent_classification-001", "input": {"message": "Hello support team. Accidentally paid the wrong seller."}}
+{"expected": {"label": "card_lost"}, "id": "intent_classification-002", "input": {"message": "Pretty sure I left my card at an online shop. Can you freeze it?"}}
+{"expected": {"label": "exchange_rate"}, "id": "intent_classification-003", "input": {"message": "the exchange rate you gave me for my $62.40 purchase abroad looks bad??"}}
+{"expected": {"label": "transfer_wrong_recipient"}, "id": "intent_classification-004", "input": {"message": "I sent €1,200 to the wrong account by mistake, can you get it back?."}}
+{"expected": {"label": "card_lost"}, "id": "intent_classification-005", "input": {"message": "Hello support team. My wallet got stolen two days ago and my card was in it."}}
+{"expected": {"label": "unrecognized_transaction"}, "id": "intent_classification-006", "input": {"message": "Hello support team. There's a €24.99 payment to a company i've never heard of."}}
+{"expected": {"label": "transfer_pending"}, "id": "intent_classification-007", "input": {"message": "my transfer to my landlord has been pending since last tuesday??"}}
+{"expected": {"label": "pin_reset"}, "id": "intent_classification-008", "input": {"message": "Hi, Can I change my card PIN in the app?. Thanks"}}
+{"expected": {"label": "unrecognized_transaction"}, "id": "intent_classification-009", "input": {"message": "Hi, what is this £180 charge? it wasn't me. Thanks"}}
+{"expected": {"label": "top_up_failed"}, "id": "intent_classification-010", "input": {"message": "Hi, can't add money to my account, the top up keeps failing. Thanks"}}
+{"expected": {"label": "update_address"}, "id": "intent_classification-011", "input": {"message": "need to change my home address on file"}}
+{"expected": {"label": "card_not_arrived"}, "id": "intent_classification-012", "input": {"message": "Card delivery is late, the tracking hasn't moved in 10 days."}}
+{"expected": {"label": "refund_status"}, "id": "intent_classification-013", "input": {"message": "Hello support team. Still waiting on a refund from an online shop."}}
+{"expected": {"label": "pin_reset"}, "id": "intent_classification-014", "input": {"message": "Hi, forgot my PIN, how do I get a new one. Thanks"}}
+{"expected": {"label": "refund_status"}, "id": "intent_classification-015", "input": {"message": "the supermarket said they refunded me £180 yesterday, when will i see it???"}}
+{"expected": {"label": "app_login"}, "id": "intent_classification-016", "input": {"message": "can't log in to the app, it keeps saying error??"}}
+{"expected": {"label": "fee_question"}, "id": "intent_classification-017", "input": {"message": "Hello support team. There's a $62.40 fee i don't understand."}}
+{"expected": {"label": "refund_status"}, "id": "intent_classification-018", "input": {"message": "the shop processed my return last week but no money back yet"}}
+{"expected": {"label": "update_address"}, "id": "intent_classification-019", "input": {"message": "I moved to Bologna, how do I update my address?"}}
+{"expected": {"label": "transfer_pending"}, "id": "intent_classification-020", "input": {"message": "Why is my bank transfer stuck in processing?."}}
+{"expected": {"label": "duplicate_charge"}, "id": "intent_classification-021", "input": {"message": "Hi, I was charged twice for the same thing at the pharmacy. Thanks"}}
+{"expected": {"label": "atm_cash_not_received"}, "id": "intent_classification-022", "input": {"message": "The atm at an online shop didn't give me the cash but took €1,200 from my account."}}
+{"expected": {"label": "transfer_pending"}, "id": "intent_classification-023", "input": {"message": "my transfer to my landlord has been pending since last tuesday??"}}
+{"expected": {"label": "fee_question"}, "id": "intent_classification-024", "input": {"message": "Hi, what is this monthly fee on my statement?. Thanks"}}
+{"expected": {"label": "statement_request"}, "id": "intent_classification-025", "input": {"message": "Hi, how do I download my statements as PDF?. Thanks"}}
+{"expected": {"label": "card_declined"}, "id": "intent_classification-026", "input": {"message": "Tried paying €24.99 at a petrol station and it said declined."}}
+{"expected": {"label": "pin_reset"}, "id": "intent_classification-027", "input": {"message": "Forgot my pin, how do i get a new one."}}
+{"expected": {"label": "account_closure"}, "id": "intent_classification-028", "input": {"message": "Hi, I want to close my account please. Thanks"}}
+{"expected": {"label": "card_not_arrived"}, "id": "intent_classification-029", "input": {"message": "card delivery is late, the tracking hasn't moved in 12 days??"}}
+{"expected": {"label": "card_declined"}, "id": "intent_classification-030", "input": {"message": "Hi, tried paying £9.50 at a petrol station and it said declined. Thanks"}}
+{"expected": {"label": "unrecognized_transaction"}, "id": "intent_classification-031", "input": {"message": "I didn't make this purchase from a hotel in lisbon."}}
+{"expected": {"label": "app_login"}, "id": "intent_classification-032", "input": {"message": "login code never arrives so i can't sign in??"}}
+{"expected": {"label": "card_lost"}, "id": "intent_classification-033", "input": {"message": "Hi, my wallet got stolen yesterday and my card was in it. Thanks"}}
+{"expected": {"label": "contactless_not_working"}, "id": "intent_classification-034", "input": {"message": "Hello support team. Why doesn't my card work with contactless?."}}
+{"expected": {"label": "card_limit"}, "id": "intent_classification-035", "input": {"message": "I hit a limit trying to pay $62.40, can it be increased?"}}
+{"expected": {"label": "exchange_rate"}, "id": "intent_classification-036", "input": {"message": "The exchange rate you gave me for my £9.50 purchase abroad looks bad."}}
+{"expected": {"label": "transfer_wrong_recipient"}, "id": "intent_classification-037", "input": {"message": "I sent £9.50 to the wrong account by mistake, can you get it back?"}}
+{"expected": {"label": "account_closure"}, "id": "intent_classification-038", "input": {"message": "please shut down my account, I'm moving to another bank"}}
+{"expected": {"label": "card_declined"}, "id": "intent_classification-039", "input": {"message": "my card got declined at an online shop even though i have money??"}}
+{"expected": {"label": "card_limit"}, "id": "intent_classification-040", "input": {"message": "Hi, can I raise my card spending limit for a trip?. Thanks"}}
+{"expected": {"label": "verify_identity"}, "id": "intent_classification-041", "input": {"message": "how long does identity verification take? submitted on Friday"}}
+{"expected": {"label": "duplicate_charge"}, "id": "intent_classification-042", "input": {"message": "There are two identical £9.50 payments to the supermarket."}}
+{"expected": {"label": "exchange_rate"}, "id": "intent_classification-043", "input": {"message": "what rate do you use to convert to euros???"}}
+{"expected": {"label": "duplicate_charge"}, "id": "intent_classification-044", "input": {"message": "double charge on my account from the supermarket, please fix??"}}
+{"expected": {"label": "card_not_arrived"}, "id": "intent_classification-045", "input": {"message": "card delivery is late, the tracking hasn't moved in 12 days"}}
+{"expected": {"label": "verify_identity"}, "id": "intent_classification-046", "input": {"message": "my ID verification keeps getting rejected"}}
+{"expected": {"label": "atm_cash_not_received"}, "id": "intent_classification-047", "input": {"message": "no money came out of the machine, still charged"}}
+{"expected": {"label": "statement_request"}, "id": "intent_classification-048", "input": {"message": "Hi, I need a bank statement for on Friday for my mortgage application. Thanks"}}
+{"expected": {"label": "top_up_failed"}, "id": "intent_classification-049", "input": {"message": "Hello support team. Tried to top up €1,200 and it failed."}}
+{"expected": {"label": "contactless_not_working"}, "id": "intent_classification-050", "input": {"message": "contactless keeps failing at a hotel in lisbon, chip and pin works fine??"}}

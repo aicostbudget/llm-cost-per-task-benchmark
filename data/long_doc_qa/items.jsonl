@@ -1,0 +1,50 @@
+{"expected": {"answer": "214", "kind": "amount"}, "id": "long_doc_qa-001", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the maximum hotel rate per night in euros?"}}
+{"expected": {"answer": "Facilities Lead", "kind": "text"}, "id": "long_doc_qa-002", "input": {"document_ref": "handbook", "question": "Which role owns the equipment refresh policy?"}}
+{"expected": {"answer": "177", "kind": "amount"}, "id": "long_doc_qa-003", "input": {"document_ref": "handbook", "question": "In Iberia, what is the maximum hotel rate per night in euros?"}}
+{"expected": {"answer": "46", "kind": "number"}, "id": "long_doc_qa-004", "input": {"document_ref": "handbook", "question": "In Nordics, what is the months before a laptop may be replaced?"}}
+{"expected": {"answer": "Procurement Lead", "kind": "text"}, "id": "long_doc_qa-005", "input": {"document_ref": "handbook", "question": "Which role owns the meal allowance policy?"}}
+{"expected": {"answer": "63", "kind": "amount"}, "id": "long_doc_qa-006", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the daily meal allowance during business travel in euros?"}}
+{"expected": {"answer": "2026-04-27", "kind": "date"}, "id": "long_doc_qa-007", "input": {"document_ref": "handbook", "question": "Since what date has the sick leave certificate policy been effective?"}}
+{"expected": {"answer": "3", "kind": "number"}, "id": "long_doc_qa-008", "input": {"document_ref": "handbook", "question": "In North America, what is the consecutive sick days after which a medical certificate is required?"}}
+{"expected": {"answer": "Travel Desk Coordinator", "kind": "text"}, "id": "long_doc_qa-009", "input": {"document_ref": "handbook", "question": "Which role owns the gym subsidy policy?"}}
+{"expected": {"answer": "4", "kind": "number"}, "id": "long_doc_qa-010", "input": {"document_ref": "handbook", "question": "In Nordics, what is the months of probation for new hires?"}}
+{"expected": {"answer": "2160", "kind": "amount"}, "id": "long_doc_qa-011", "input": {"document_ref": "handbook", "question": "In North America, what is the annual training budget per employee in euros?"}}
+{"expected": {"answer": "12", "kind": "number"}, "id": "long_doc_qa-012", "input": {"document_ref": "handbook", "question": "In North America, what is the weeks of parental leave paid at full salary?"}}
+{"expected": {"answer": "4", "kind": "number"}, "id": "long_doc_qa-013", "input": {"document_ref": "handbook", "question": "In Nordics, what is the days per week employees may work remotely?"}}
+{"expected": {"answer": "Chief Information Security Officer", "kind": "text"}, "id": "long_doc_qa-014", "input": {"document_ref": "handbook", "question": "Which role owns the probation policy?"}}
+{"expected": {"answer": "39", "kind": "number"}, "id": "long_doc_qa-015", "input": {"document_ref": "handbook", "question": "In Iberia, what is the months before a laptop may be replaced?"}}
+{"expected": {"answer": "2025-12-29", "kind": "date"}, "id": "long_doc_qa-016", "input": {"document_ref": "handbook", "question": "Since what date has the equipment refresh policy been effective?"}}
+{"expected": {"answer": "44", "kind": "number"}, "id": "long_doc_qa-017", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the months before a laptop may be replaced?"}}
+{"expected": {"answer": "823", "kind": "amount"}, "id": "long_doc_qa-018", "input": {"document_ref": "handbook", "question": "In Nordics, what is the one-off home office stipend in euros?"}}
+{"expected": {"answer": "3238", "kind": "amount"}, "id": "long_doc_qa-019", "input": {"document_ref": "handbook", "question": "In Nordics, what is the maximum bike lease value in euros?"}}
+{"expected": {"answer": "2990", "kind": "amount"}, "id": "long_doc_qa-020", "input": {"document_ref": "handbook", "question": "In Nordics, what is the annual training budget per employee in euros?"}}
+{"expected": {"answer": "25", "kind": "amount"}, "id": "long_doc_qa-021", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the monthly gym subsidy in euros?"}}
+{"expected": {"answer": "Procurement Lead", "kind": "text"}, "id": "long_doc_qa-022", "input": {"document_ref": "handbook", "question": "Which role owns the bike lease policy?"}}
+{"expected": {"answer": "364", "kind": "amount"}, "id": "long_doc_qa-023", "input": {"document_ref": "handbook", "question": "In Benelux, what is the euros paid per on-call weekend?"}}
+{"expected": {"answer": "235", "kind": "amount"}, "id": "long_doc_qa-024", "input": {"document_ref": "handbook", "question": "In North America, what is the maximum hotel rate per night in euros?"}}
+{"expected": {"answer": "143", "kind": "amount"}, "id": "long_doc_qa-025", "input": {"document_ref": "handbook", "question": "In Asia Pacific, what is the maximum hotel rate per night in euros?"}}
+{"expected": {"answer": "4591", "kind": "amount"}, "id": "long_doc_qa-026", "input": {"document_ref": "handbook", "question": "In North America, what is the maximum bike lease value in euros?"}}
+{"expected": {"answer": "22", "kind": "number"}, "id": "long_doc_qa-027", "input": {"document_ref": "handbook", "question": "In Benelux, what is the days of paid annual leave per calendar year?"}}
+{"expected": {"answer": "812", "kind": "amount"}, "id": "long_doc_qa-028", "input": {"document_ref": "handbook", "question": "In North America, what is the one-off home office stipend in euros?"}}
+{"expected": {"answer": "27", "kind": "number"}, "id": "long_doc_qa-029", "input": {"document_ref": "handbook", "question": "In Iberia, what is the days of paid annual leave per calendar year?"}}
+{"expected": {"answer": "2025-04-09", "kind": "date"}, "id": "long_doc_qa-030", "input": {"document_ref": "handbook", "question": "Since what date has the expense claims policy been effective?"}}
+{"expected": {"answer": "2025-05-07", "kind": "date"}, "id": "long_doc_qa-031", "input": {"document_ref": "handbook", "question": "Since what date has the on-call compensation policy been effective?"}}
+{"expected": {"answer": "13", "kind": "number"}, "id": "long_doc_qa-032", "input": {"document_ref": "handbook", "question": "In Asia Pacific, what is the weeks of parental leave paid at full salary?"}}
+{"expected": {"answer": "37", "kind": "amount"}, "id": "long_doc_qa-033", "input": {"document_ref": "handbook", "question": "In North America, what is the daily meal allowance during business travel in euros?"}}
+{"expected": {"answer": "53", "kind": "amount"}, "id": "long_doc_qa-034", "input": {"document_ref": "handbook", "question": "In Nordics, what is the daily meal allowance during business travel in euros?"}}
+{"expected": {"answer": "20", "kind": "number"}, "id": "long_doc_qa-035", "input": {"document_ref": "handbook", "question": "In North America, what is the days within which expense claims must be submitted?"}}
+{"expected": {"answer": "2026-04-21", "kind": "date"}, "id": "long_doc_qa-036", "input": {"document_ref": "handbook", "question": "Since what date has the annual leave policy been effective?"}}
+{"expected": {"answer": "1", "kind": "number"}, "id": "long_doc_qa-037", "input": {"document_ref": "handbook", "question": "In Asia Pacific, what is the days per week employees may work remotely?"}}
+{"expected": {"answer": "1", "kind": "number"}, "id": "long_doc_qa-038", "input": {"document_ref": "handbook", "question": "In Iberia, what is the days per week employees may work remotely?"}}
+{"expected": {"answer": "4", "kind": "number"}, "id": "long_doc_qa-039", "input": {"document_ref": "handbook", "question": "In Nordics, what is the consecutive sick days after which a medical certificate is required?"}}
+{"expected": {"answer": "76", "kind": "number"}, "id": "long_doc_qa-040", "input": {"document_ref": "handbook", "question": "In Nordics, what is the days of notice required for resignation after probation?"}}
+{"expected": {"answer": "3", "kind": "number"}, "id": "long_doc_qa-041", "input": {"document_ref": "handbook", "question": "In North America, what is the days per week employees may work remotely?"}}
+{"expected": {"answer": "2026-04-15", "kind": "date"}, "id": "long_doc_qa-042", "input": {"document_ref": "handbook", "question": "Since what date has the notice period policy been effective?"}}
+{"expected": {"answer": "5", "kind": "number"}, "id": "long_doc_qa-043", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the months of probation for new hires?"}}
+{"expected": {"answer": "30", "kind": "number"}, "id": "long_doc_qa-044", "input": {"document_ref": "handbook", "question": "In Benelux, what is the months before a laptop may be replaced?"}}
+{"expected": {"answer": "Payroll Manager", "kind": "text"}, "id": "long_doc_qa-045", "input": {"document_ref": "handbook", "question": "Which role owns the expense claims policy?"}}
+{"expected": {"answer": "25", "kind": "number"}, "id": "long_doc_qa-046", "input": {"document_ref": "handbook", "question": "In Iberia, what is the weeks of parental leave paid at full salary?"}}
+{"expected": {"answer": "859", "kind": "amount"}, "id": "long_doc_qa-047", "input": {"document_ref": "handbook", "question": "In Iberia, what is the annual training budget per employee in euros?"}}
+{"expected": {"answer": "48", "kind": "number"}, "id": "long_doc_qa-048", "input": {"document_ref": "handbook", "question": "In North America, what is the months before a laptop may be replaced?"}}
+{"expected": {"answer": "5", "kind": "number"}, "id": "long_doc_qa-049", "input": {"document_ref": "handbook", "question": "In Central Europe, what is the consecutive sick days after which a medical certificate is required?"}}
+{"expected": {"answer": "660", "kind": "amount"}, "id": "long_doc_qa-050", "input": {"document_ref": "handbook", "question": "In Benelux, what is the annual training budget per employee in euros?"}}

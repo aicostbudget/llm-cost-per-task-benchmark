@@ -1,0 +1,4 @@
+# Only needed for live runs (runner.py --run). generate.py, selftest.py and runner.py --estimate/--dry-run use none of these.
+anthropic>=1.0
+openai>=2.0
+google-genai>=1.30

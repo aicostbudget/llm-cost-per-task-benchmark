@@ -1,0 +1,2 @@
+# generate.py and selftest.py: only Pillow (renders the receipt images)
+Pillow==12.3.0  # pinned: generate.py --check compares the rendered receipt PNGs byte for byte
