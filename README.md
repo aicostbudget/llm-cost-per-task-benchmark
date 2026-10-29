@@ -1,17 +1,36 @@
 # LLM cost per successful task
 
+[![check](https://github.com/aicostbudget/llm-cost-per-task-benchmark/actions/workflows/check.yml/badge.svg)](https://github.com/aicostbudget/llm-cost-per-task-benchmark/actions/workflows/check.yml)
+[![code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE-CODE)
+[![data: CC BY 4.0](https://img.shields.io/badge/data-CC%20BY%204.0-blue)](LICENSE-DATA)
+
+**Same accuracy, 9× the bill.** On 1,440 graded answers, DeepSeek's flagship model got exactly as many tasks
+right as its cheap model — and cost 4.9× as much per success on everyday tasks, 9.2× on hard ones.
+
+| Per 1M successful tasks (list price) | deepseek-flash | deepseek-v4-pro | |
+|---|---:|---:|---:|
+| Standard tier, 9 tasks | **$347** | $1,698 | 4.9× |
+| Hard tier, 6 tasks | **$596** | $5,478 | 9.2× |
+| Success within 3 attempts | 100% | 100% | |
+
+The gap is hidden reasoning: V4 Pro wrote up to 4.3× more output tokens, and three times it thought until the
+16K output limit and returned nothing — billed in full. Full write-up and caveats:
+[results/2026-10-29-deepseek.md](results/2026-10-29-deepseek.md). The whole run cost about $1.40.
+
+**Your models will give different numbers. That is the point: measure before you pay.**
+
 Price per million tokens tells you what one API call costs. It does not tell you what one **usable result**
-costs, because cheaper models fail more often and every retry is billed. This benchmark measures the number
-that matters:
+costs: failures get retried, reasoning tokens are billed, and some answers come back empty. This benchmark
+measures the number that matters:
 
 ```
 cost per successful task = everything you paid for all attempts ÷ results that passed the check
 ```
 
-It ships ten everyday tasks with fixed inputs and a pass/fail check written in code, a runner for OpenAI,
-Anthropic, Google Gemini and DeepSeek, and prices from the open
+It ships 16 tasks (10 everyday, 6 hard) with fixed inputs and a pass/fail check written in code — no LLM
+judge — a runner for OpenAI, Anthropic, Google Gemini and DeepSeek, and prices from the open
 [AI API pricing dataset](https://github.com/aicostbudget/ai-api-pricing-data). Bring your own API key; nothing
-is sent anywhere except to the providers you choose.
+is sent anywhere except to the providers you choose. No key? [Try it free with Gemini](#trying-it-for-free-with-gemini).
 
 ## Quick start
 
