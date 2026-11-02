@@ -6,8 +6,9 @@
     python runner.py --summarize runs/<run-id>
 
 A live run needs the provider SDKs (pip install -r requirements-runner.txt) and API keys in environment
-variables only (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, DEEPSEEK_API_KEY). Keys are never
-written to logs. Prices come from the public AI API pricing dataset (github.com/aicostbudget/ai-api-pricing-data),
+variables only (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, DEEPSEEK_API_KEY, or the api_key_env an
+openai-compatible entry names). Keys are never written to logs. Models of your own (local servers, OpenRouter,
+Groq and so on) go in models.local.json, which git ignores. Prices come from the public AI API pricing dataset (github.com/aicostbudget/ai-api-pricing-data),
 pinned to its current commit, unless --pricing points at a local copy. Every attempt is appended to runs/<run-id>/attempts.jsonl, so an interrupted run resumes
 where it stopped. The run stops before any attempt that could push spend past --budget.
 """
@@ -44,13 +45,47 @@ CALCULATOR_URL = ("https://aicostbudget.com/en/model-switch-cost-calculator"
                   "?utm_source=github&utm_medium=referral&utm_campaign=cost-per-task-benchmark&utm_content=report")
 
 
+LOCAL_ROSTER = "models.local.json"
+DEFAULT_REASONING_ALLOWANCE = 300
+
+
+def check_entry(model: dict, source: str) -> None:
+    where = f"{source}: {model.get('model_id', '?')}"
+    for key in ("model_id", "provider", "api_model"):
+        if not model.get(key):
+            raise SystemExit(f"{where} needs {key}")
+    if model["provider"] == "openai-compatible":
+        if not model.get("base_url"):
+            raise SystemExit(f"{where} needs base_url")
+        if "price" not in model and "pricing_provider" not in model:
+            raise SystemExit(f"{where} needs a price (USD per million tokens) or a pricing_provider to look it up in the dataset")
+    if "price" in model:
+        price = model["price"]
+        if not all(isinstance(price.get(k), (int, float)) and price[k] >= 0 for k in ("input", "output")):
+            raise SystemExit(f"{where}: price needs numeric input and output (USD per million tokens)")
+
+
 def load_roster(selected: str | None) -> list[dict]:
     roster = json.loads((HERE / "models.json").read_text(encoding="utf-8"))["models"]
+    for model in roster:
+        check_entry(model, "models.json")
+    local = HERE / LOCAL_ROSTER
+    if local.exists():
+        extra = json.loads(local.read_text(encoding="utf-8"))["models"]
+        for model in extra:
+            check_entry(model, LOCAL_ROSTER)
+        clash = {m["model_id"] for m in roster} & {m["model_id"] for m in extra}
+        if clash:
+            raise SystemExit(f"{LOCAL_ROSTER} repeats model_id(s) from models.json: {', '.join(sorted(clash))}")
+        roster = roster + extra
+    for model in roster:
+        model.setdefault("vision", False)
+        model.setdefault("reasoning_allowance", DEFAULT_REASONING_ALLOWANCE)
     if selected:
         wanted = selected.split(",")
         unknown = set(wanted) - {m["model_id"] for m in roster}
         if unknown:
-            raise SystemExit(f"not in models.json: {', '.join(sorted(unknown))}")
+            raise SystemExit(f"not in models.json or {LOCAL_ROSTER}: {', '.join(sorted(unknown))}")
         roster = [m for m in roster if m["model_id"] in wanted]
     return roster
 
@@ -73,7 +108,17 @@ def fetch_public_prices() -> tuple[list, dict]:
                                  "dataset_commit": commit, "pricing_sha256": hashlib.sha256(content).hexdigest()}
 
 
+def price_from_entry(price: dict) -> dict:
+    """A price typed in the roster, for models the dataset doesn't list (local, self-hosted, resellers)."""
+    return {"input": price["input"], "output": price["output"],
+            "cached_input": price.get("cached_input", price["input"]), "cache_write": price.get("cache_write", price["input"])}
+
+
 def load_prices(path: Path | None, roster: list[dict]) -> tuple[dict, dict]:
+    prices = {m["model_id"]: price_from_entry(m["price"]) for m in roster if "price" in m}
+    from_dataset = [m for m in roster if "price" not in m]
+    if not from_dataset:
+        return prices, {"pricing_source": "roster (price typed in the model entry)"}
     if path is None:
         canonical, meta = fetch_public_prices()
     else:
@@ -85,11 +130,13 @@ def load_prices(path: Path | None, roster: list[dict]) -> tuple[dict, dict]:
             commit = ""
         meta = {"pricing_source": str(path), "dataset_commit": commit, "pricing_sha256": hashlib.sha256(content).hexdigest()}
     by_id = {(m["provider_id"], m["model_id"]): m for m in canonical}
-    prices = {}
-    for model in roster:
-        entry = by_id.get((model["provider"], model["model_id"]))
+    for model in from_dataset:
+        provider = model.get("pricing_provider", model["provider"])
+        dataset_id = model.get("pricing_model_id", model["model_id"])
+        entry = by_id.get((provider, dataset_id))
         if not entry or not entry.get("pricing") or entry["pricing"].get("input") is None:
-            raise SystemExit(f"no standard price for {model['provider']}/{model['model_id']} in {meta['pricing_source']}")
+            raise SystemExit(f"no standard price for {provider}/{dataset_id} in {meta['pricing_source']}"
+                             " (models the dataset doesn't list need a \"price\" in their roster entry)")
         p = entry["pricing"]
         prices[model["model_id"]] = {"input": p["input"], "output": p["output"],
                                      "cached_input": p.get("cached_input") if p.get("cached_input") is not None else p["input"],
@@ -178,7 +225,7 @@ def done_keys(log: Path) -> set[tuple[str, str]]:
 
 def run(args, roster, prices, pricing_meta) -> int:
     from bench import providers
-    missing = providers.missing_keys({m["provider"] for m in roster})
+    missing = providers.missing_keys(roster)
     if missing and not args.dry_run:
         raise SystemExit(f"set these environment variables first: {', '.join(missing)}")
     run_dir = HERE / "runs" / (args.run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
@@ -186,11 +233,12 @@ def run(args, roster, prices, pricing_meta) -> int:
     if not args.dry_run:
         run_dir.mkdir(parents=True, exist_ok=True)
         meta = {"started_at": datetime.now(timezone.utc).isoformat(), "budget_usd": args.budget, "seed": registry.SEED,
-                "models": roster, "prices_per_million": prices, **pricing_meta}
+                "models": roster, "prices_per_million": prices,
+                "typed_prices": sorted(m["model_id"] for m in roster if "price" in m), **pricing_meta}
         (run_dir / "run.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
     spent = sum(json.loads(l)["cost_usd"] for l in log.read_text(encoding="utf-8").splitlines()) if log.exists() else 0.0
     finished = done_keys(log)
-    adapters: dict[str, object] = {}
+    adapters: dict[tuple, object] = {}
     for task in selected_tasks(args.tasks):
         items, shared = registry.generate(task)
         task_dir = HERE / "data" / task.TASK_ID
@@ -209,7 +257,8 @@ def run(args, roster, prices, pricing_meta) -> int:
                                       "turns": turns, "images": [str(p) for p in images], "tools": [t["name"] for t in prompt.get("tools", [])],
                                       "cache_system": bool(prompt.get("cache_system"))}, ensure_ascii=False)[:600])
                     continue
-                adapter = adapters.get(model["provider"]) or adapters.setdefault(model["provider"], providers.ADAPTERS[model["provider"]]())
+                key = providers.adapter_key(model)
+                adapter = adapters.get(key) or adapters.setdefault(key, providers.make_adapter(model))
                 for attempt in range(1, MAX_ATTEMPTS + 1):
                     guard = 3 * estimate_attempt(task.TASK_ID, prompt, attempt, model, price, index == 0 and attempt == 1)
                     if spent + guard > args.budget:

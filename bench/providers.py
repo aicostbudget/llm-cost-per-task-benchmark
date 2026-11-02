@@ -13,6 +13,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -40,8 +41,9 @@ class Reply:
     extra: dict = field(default_factory=dict)
 
 
-def missing_keys(providers: set[str]) -> list[str]:
-    return [KEY_ENV[p] for p in sorted(providers) if p in KEY_ENV and not os.environ.get(KEY_ENV[p])]
+def missing_keys(roster: list[dict]) -> list[str]:
+    names = {KEY_ENV.get(m["provider"]) or m.get("api_key_env") for m in roster}
+    return sorted(n for n in names if n and not os.environ.get(n))
 
 
 def _image_b64(path: Path) -> str:
@@ -147,33 +149,81 @@ class Gemini:
         return Reply(text, call, usage, finish, response.response_id or "")
 
 
-class DeepSeek:
-    """DeepSeek documents its API as OpenAI-compatible and points to the OpenAI SDK with its own base URL."""
+THINK_BLOCK = re.compile(r"^\s*<think>.*?</think>\s*", re.DOTALL)
 
-    def __init__(self) -> None:
+
+class OpenAICompatible:
+    """Any server that speaks the OpenAI Chat Completions API: Ollama, vLLM, LM Studio, llama.cpp server,
+    OpenRouter, Groq, Together and others. base_url and the key's environment variable come from the roster
+    entry; local servers usually need no key.
+
+    Token usage must come back in the response, because cost is computed from it. Cached input is read from
+    prompt_tokens_details.cached_tokens (OpenAI's field) or prompt_cache_hit_tokens (DeepSeek's). Models that
+    write their reasoning inline as <think>...</think> before the answer get that block removed before the
+    check; its tokens stay in the output count, since that is what was generated."""
+
+    def __init__(self, base_url: str, api_key_env: str | None = None) -> None:
         import openai
-        self.client = openai.OpenAI(api_key=os.environ["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com", max_retries=4)
+        # The SDK refuses an empty key; local servers ignore whatever is sent.
+        key = os.environ[api_key_env] if api_key_env else "not-needed"
+        self.client = openai.OpenAI(api_key=key, base_url=base_url, max_retries=4)
 
     def send(self, api_model: str, system: str, turns: list[dict], images: list[Path], tools: list[dict] | None,
              cache_system: bool) -> Reply:
-        if images:
-            raise ValueError("DeepSeek models in the roster take no image input")
-        messages = [{"role": "system", "content": system}] + [{"role": t["role"], "content": t["text"]} for t in turns]
+        messages = [{"role": "system", "content": system}]
+        for index, turn in enumerate(turns):
+            if index == 0 and images:
+                content = [{"type": "image_url", "image_url": {"url": f"data:image/png;base64,{_image_b64(p)}"}} for p in images]
+                content.append({"type": "text", "text": turn["text"]})
+                messages.append({"role": turn["role"], "content": content})
+            else:
+                messages.append({"role": turn["role"], "content": turn["text"]})
         kwargs = {}
         if tools:
             kwargs["tools"] = [{"type": "function", "function": {"name": t["name"], "description": t["description"], "parameters": t["parameters"]}} for t in tools]
         response = self.client.chat.completions.create(model=api_model, messages=messages, max_tokens=MAX_OUTPUT_TOKENS, **kwargs)
+        u = response.usage
+        if u is None or u.prompt_tokens is None:
+            raise ValueError("the server returned no token usage, so the attempt cannot be priced")
         choice = response.choices[0]
         call = None
         if choice.message.tool_calls:
             fn = choice.message.tool_calls[0].function
             call = {"tool": fn.name, "arguments": json.loads(fn.arguments or "{}")}
-        u = response.usage
-        hit = getattr(u, "prompt_cache_hit_tokens", 0) or 0
+        prompt_details = getattr(u, "prompt_tokens_details", None)
+        hit = getattr(u, "prompt_cache_hit_tokens", 0) or (getattr(prompt_details, "cached_tokens", 0) if prompt_details else 0) or 0
         details = getattr(u, "completion_tokens_details", None)
         reasoning = getattr(details, "reasoning_tokens", 0) or 0 if details else 0
-        usage = Usage(input_uncached=u.prompt_tokens - hit, input_cached=hit, output=u.completion_tokens, reasoning=reasoning)
-        return Reply(choice.message.content or "", call, usage, choice.finish_reason or "", response.id)
+        usage = Usage(input_uncached=u.prompt_tokens - hit, input_cached=hit, output=u.completion_tokens or 0, reasoning=reasoning)
+        text = THINK_BLOCK.sub("", choice.message.content or "", count=1)
+        return Reply(text, call, usage, choice.finish_reason or "", response.id or "")
+
+
+class DeepSeek(OpenAICompatible):
+    """DeepSeek documents its API as OpenAI-compatible and points to the OpenAI SDK with its own base URL."""
+
+    def __init__(self) -> None:
+        super().__init__("https://api.deepseek.com", "DEEPSEEK_API_KEY")
+
+    def send(self, api_model: str, system: str, turns: list[dict], images: list[Path], tools: list[dict] | None,
+             cache_system: bool) -> Reply:
+        if images:
+            raise ValueError("DeepSeek models in the roster take no image input")
+        return super().send(api_model, system, turns, images, tools, cache_system)
 
 
 ADAPTERS = {"anthropic": Anthropic, "openai": OpenAI, "google-gemini": Gemini, "deepseek": DeepSeek}
+COMPATIBLE = "openai-compatible"
+
+
+def make_adapter(model: dict):
+    if model["provider"] == COMPATIBLE:
+        return OpenAICompatible(model["base_url"], model.get("api_key_env"))
+    return ADAPTERS[model["provider"]]()
+
+
+def adapter_key(model: dict) -> tuple:
+    """Models on the same provider share one client; openai-compatible servers are told apart by URL and key."""
+    if model["provider"] == COMPATIBLE:
+        return (COMPATIBLE, model["base_url"], model.get("api_key_env"))
+    return (model["provider"],)

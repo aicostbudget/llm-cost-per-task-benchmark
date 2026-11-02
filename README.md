@@ -12,9 +12,11 @@ billed even though you never see them, and now and then a reply comes back empty
 cost per success.
 
 There are 16 tasks (10 everyday, 6 hard) with fixed inputs and a pass/fail check in plain Python, no LLM
-judge. The runner supports OpenAI, Anthropic, Google Gemini and DeepSeek and takes prices from the open
-[AI API pricing dataset](https://github.com/aicostbudget/ai-api-pricing-data). You use your own API keys, and
-nothing is sent anywhere except to the providers you pick. No key? [Try it free with Gemini](#trying-it-for-free-with-gemini).
+judge. The runner supports OpenAI, Anthropic, Google Gemini and DeepSeek, plus anything that speaks the
+OpenAI Chat Completions API: Ollama, vLLM, LM Studio, llama.cpp, OpenRouter, Groq and so on. Prices come from
+the open [AI API pricing dataset](https://github.com/aicostbudget/ai-api-pricing-data), or you type your own.
+You use your own API keys, and nothing is sent anywhere except to the providers you pick. No key?
+[Try it free with Gemini](#trying-it-for-free-with-gemini) or [on a local model](#local-models-and-other-openai-compatible-servers).
 
 ## First results
 
@@ -35,8 +37,9 @@ Because both models scored 100%, these tasks don't separate them on accuracy yet
 that are cheap to check in code but still trip models up, [issue #2](https://github.com/aicostbudget/llm-cost-per-task-benchmark/issues/2)
 is the place.
 
-The DeepSeek and Gemini adapters have been run against the live APIs. The OpenAI and Anthropic ones haven't
-yet, so expect rough edges there.
+The DeepSeek and Gemini adapters have been run against the live APIs, and so has the OpenAI-compatible one
+(through Google's compatible endpoint: all 10 standard tasks, images and tool calls included). The OpenAI and
+Anthropic adapters haven't been, so expect rough edges there.
 
 ## Quick start
 
@@ -81,6 +84,43 @@ python runner.py --run --models gemini-3.5-flash-lite --limit 1 --pace 7 --budge
 Costs in the report are what the run would cost at paid prices, which is the number the benchmark is about;
 on the free tier nothing is billed. A 429 "quota exceeded" is not retried, because retries would count
 against the daily quota; resume the same `--run-id` the next day.
+
+## Local models and other OpenAI-compatible servers
+
+Put them in `models.local.json` next to `models.json` (git ignores it). Each entry needs a `base_url`, and a
+`price` in USD per million tokens unless the model is in the pricing dataset:
+
+The prices below are placeholders, not real quotes.
+
+```json
+{"models": [
+  {"model_id": "qwen3-8b-local", "provider": "openai-compatible", "api_model": "qwen3:8b",
+   "base_url": "http://localhost:11434/v1", "price": {"input": 0.05, "output": 0.20}},
+  {"model_id": "some-model-via-openrouter", "provider": "openai-compatible", "api_model": "vendor/model-name",
+   "base_url": "https://openrouter.ai/api/v1", "api_key_env": "OPENROUTER_API_KEY",
+   "price": {"input": 0.10, "output": 0.40}, "vision": true}
+]}
+```
+
+```
+python runner.py --run --models qwen3-8b-local --limit 1 --budget 1 --run-id local-smoke
+```
+
+- `api_key_env` names the environment variable that holds the key. Leave it out for a local server.
+- `price` takes `input` and `output`, and optionally `cached_input` and `cache_write`; both default to the
+  input price. For a hosted model, copy the provider's list price. For your own GPU there is no list price,
+  so the cost per success is only as good as the number you type. One way to get it: what the GPU costs per
+  hour, divided by the tokens per hour you actually get at your batch size. The
+  [self-hosting break-even write-up](https://aicostbudget.com/en/blog/self-hosting-llm-break-even?utm_source=github&utm_medium=referral&utm_campaign=cost-per-task-benchmark&utm_content=readme-local)
+  walks through that math. The run records which prices were typed by hand in `run.json`.
+- If the model is in the dataset under another provider (for example a Gemini model reached through
+  Google's OpenAI-compatible endpoint), set `pricing_provider` and `pricing_model_id` instead of `price`.
+- The server has to return token usage in the response; a reply without it is logged as an API error,
+  not priced as free. Ollama, vLLM, llama.cpp and OpenRouter all return it.
+- Models that write `<think>...</think>` before the answer get that block removed before the check. Its
+  tokens still count as output.
+- Prompt caching is counted when the server reports `cached_tokens`; most local servers don't, so
+  `long_doc_qa` will show no cached input there.
 
 ## The tasks
 
@@ -143,7 +183,8 @@ rendering differs slightly between platforms, are checked against the hashes in 
 
 Add an entry to `models.json`: `model_id` as it appears in the pricing dataset, `provider` (`openai`,
 `anthropic`, `google-gemini`, `deepseek`), `api_model` as the provider's API expects it, and whether it takes
-images. `reasoning_allowance` only affects `--estimate`.
+images. `reasoning_allowance` only affects `--estimate`. For anything else, see
+[local models and other OpenAI-compatible servers](#local-models-and-other-openai-compatible-servers).
 
 ## Checking the harness itself
 
