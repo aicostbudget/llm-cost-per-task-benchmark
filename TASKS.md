@@ -59,9 +59,9 @@ provider's native tool-calling API and converts the reply to `{"tool": name, "ar
 the right tool (or none) with matching arguments; an argument nobody asked for is only allowed at its
 documented default.
 
-## 8. `long_doc_qa` (50 items, ~30,000 in mostly cached / 40 out)
+## 8. `long_doc_qa` (50 items, ~20,000 in mostly cached / 40 out)
 
-One generated employee handbook of about 30K tokens with 15 policies, each stating values per region, an
+One generated employee handbook of about 20K tokens with 15 policies, each stating values per region, an
 owner and an effective date. Questions ask for one value. The handbook is the same system prompt on every
 call, so this task measures prompt caching as well as accuracy.
 

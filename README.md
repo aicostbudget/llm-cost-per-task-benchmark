@@ -20,20 +20,26 @@ You use your own API keys, and nothing is sent anywhere except to the providers 
 
 ## First results
 
-So far only DeepSeek has been run, once per model, on about $1.40 of credit. Full write-up and caveats:
-[results/2026-10-29-deepseek.md](results/2026-10-29-deepseek.md).
+Three models have been run so far, once each. Full write-ups and caveats:
+[DeepSeek](results/2026-10-29-deepseek.md) and [Gemini 3.5 Flash-Lite](results/2026-11-04-gemini-flash-lite.md).
 
-| Per 1M successful tasks (list price) | deepseek-flash | deepseek-v4-pro | |
+| Per 1M successful tasks (list price) | deepseek-flash | deepseek-v4-pro | gemini-3.5-flash-lite |
 |---|---:|---:|---:|
-| Standard tier, 9 tasks | $347 | $1,698 | 4.9× |
-| Hard tier, 6 tasks | $596 | $5,478 | 9.2× |
-| Success within 3 attempts | 100% | 100% | |
+| Standard tier, 9 tasks | $347 | $1,698 | $905 |
+| Hard tier, 6 tasks | $596 | $5,478 | $1,589 |
+| Success within 3 attempts, hard tier | 100% | 100% | 97.8% |
 
-Both models got every item right within 3 attempts. V4 Pro's output price is 3.3× flash's, but it wrote up
+Flash-Lite's totals come with a big caveat. It ran on a free key, where Google lists context caching as not
+available, and 74% of its standard spend is one long-document task that barely hit the cache. Without that task
+it is about 27% cheaper than deepseek-flash. With DeepSeek's cache hit rate it would be $310 and $560. It would
+need about 93% to 96% of long-document input from cache to tie. Flash-Lite is also the first model here to fail
+items after 3 attempts: 6 of 270, all hard regexes.
+
+Both DeepSeek models got every item right within 3 attempts. V4 Pro's output price is 3.3× flash's, but it wrote up
 to 4.3× more output tokens, nearly all of them reasoning. Three times it hit the 16K output limit and
 returned nothing, and those calls were billed too.
 
-Because both models scored 100%, these tasks don't separate them on accuracy yet. If you have task ideas
+These tasks barely separate the models on accuracy yet. If you have task ideas
 that are cheap to check in code but still trip models up, [issue #2](https://github.com/aicostbudget/llm-cost-per-task-benchmark/issues/2)
 is the place.
 
@@ -133,7 +139,7 @@ python runner.py --run --models qwen3-8b-local --limit 1 --budget 1 --run-id loc
 | `intent_classification` | 50 | Label a support message with one of 20 intents | exact label |
 | `bug_fix` | 50 | Fix one planted bug in a short Python function | hidden unit tests pass |
 | `tool_calling` | 50 | Pick a tool and arguments, or no tool | right tool and arguments |
-| `long_doc_qa` | 50 | Answer from a ~30K-token handbook sent as a cacheable prefix | short answer equal |
+| `long_doc_qa` | 50 | Answer from a ~20K-token handbook sent as a cacheable prefix | short answer equal |
 | `record_normalization` | 50 | Normalise messy contact records | 5 fields in canonical form |
 | `regex_from_examples` | 50 | Write a regex from a spec and examples | 12 hidden strings classified correctly |
 
@@ -196,7 +202,8 @@ python test_runner.py    # cost math, retries, resume and the budget stop, with 
 ## Sharing results
 
 Published runs are in [results/](results/), starting with
-[DeepSeek flash vs V4 Pro on both tiers](results/2026-10-29-deepseek.md).
+[DeepSeek flash vs V4 Pro on both tiers](results/2026-10-29-deepseek.md) and
+[Gemini 3.5 Flash-Lite on a free key](results/2026-11-04-gemini-flash-lite.md).
 
 Open an issue with your `report.md` and the `run.json` next to it. Please do not post `attempts.jsonl` if you
 changed prompts or data; results are only comparable on the unmodified task set.
